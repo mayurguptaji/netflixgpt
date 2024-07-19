@@ -1,35 +1,56 @@
-import React from 'react';
+import React , {useEffect} from 'react';
 import { signOut } from "firebase/auth";
 import { auth } from '../utils/firebase';
 import { useNavigate } from "react-router-dom";
 import { useSelector } from 'react-redux';
-
+import {useDispatch} from 'react-redux';
+import {onAuthStateChanged } from "firebase/auth";
+import {addUser , removeUser} from './../utils/UserSlice';
+import {HeaderNetflixLogo} from './../utils/constants';
 
 const Header = () => {
 
 
   const UserInfo = useSelector((store) => {return store.user});
-  console.log(UserInfo);
-  debugger;
-  const navigate = useNavigate();
+
   
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const signOutUser = () => {
     signOut(auth).then(() => {
-
-      
-      navigate('/');
 
     }).catch((error) => {
       // An error happened.
     });
   }
 
+
+    
+
+  useEffect(()=>{
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in, see docs for a list of available properties
+        dispatch(addUser({email:user.email,uid:user.uid}));
+        navigate("/browse");
+        
+      } else {
+        dispatch(removeUser());
+        navigate("/");
+      }
+    });
+
+    //when component unmounts unsubscribe is called, so event listner onAuthStateChanged is unsubscribed. onAuthStateChanged in firebase returns unsubscribe fn. if we dont use this, everytine onAuthStateChanged gets attached when header loads
+    return () => unsubscribe();
+  },[]);
+
   return (
     <header className="absolute top-0 left-0 w-full bg-gradient-to-br from-black text-white p-4 z-50 flex justify-between items-center">
       <div>
         <img
           className="w-36"
-          src="https://cdn.cookielaw.org/logos/dd6b162f-1a32-456a-9cfe-897231c7763c/4345ea78-053c-46d2-b11e-09adaef973dc/Netflix_Logo_PMS.png"
+          src={HeaderNetflixLogo}
           alt="Netflix Logo"
         />
       </div>

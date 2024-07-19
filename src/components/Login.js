@@ -3,13 +3,12 @@ import Header from './Header';
 import { checkValidateDate } from '../utils/validate';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from './../utils/firebase';
-import { useNavigate } from "react-router-dom";
+import {LoginPAgeBGImage} from './../utils/constants';
 
 const Login = () => {
   const [ErrorMEssage, setErrorMEssage] = useState(null);
   const email = useRef(null);
   const pswd = useRef(null);
-  const navigate = useNavigate();
   const [isSignUp, setisSignUp] = useState(true);
 
   const toggleSignInForm = () => {
@@ -17,16 +16,24 @@ const Login = () => {
   }
 
   const handleSignIn = () => {
-    setErrorMEssage(checkValidateDate(email.current.value, pswd.current.value));
+    const validationError = checkValidateDate(email.current.value, pswd.current.value);
+   
 
-    if (ErrorMEssage) return;
+    if (validationError) {
+      setErrorMEssage(validationError);
+      return;
+    } else {
+      setErrorMEssage(null);
+    }
+
+    
 
     if (isSignUp) {
       createUserWithEmailAndPassword(auth, email.current.value, pswd.current.value)
         .then((userCredential) => {
           // Signed up
           const user = userCredential.user;
-          navigate("/browse");
+          
           // ...
         })
         .catch((error) => {
@@ -41,7 +48,7 @@ const Login = () => {
         .then((userCredential) => {
           // Signed in
           const user = userCredential.user;
-          navigate("/browse");
+         
           // ...
         })
         .catch((error) => {
@@ -58,7 +65,7 @@ const Login = () => {
       <div className='fixed inset-0 z-0'>
         <img
           alt="alt"
-          src='https://assets.nflxext.com/ffe/siteui/vlv3/a56dc29b-a0ec-4f6f-85fb-50df0680f80f/2f8ae902-8efe-49bb-9a91-51b6fcc8bf46/IN-en-20240617-popsignuptwoweeks-perspective_alpha_website_large.jpg'
+          src={LoginPAgeBGImage}
           className='w-full h-full object-cover'
         />
       </div>
@@ -77,7 +84,7 @@ const Login = () => {
         <button className='p-3 mx-2 my-4 w-full bg-red-700 rounded-lg' onClick={handleSignIn}>{isSignUp ? "Sign Up" : "Sign In"}</button>
 
         <div className='w-full text-[14px] mx-2 my-5 cursor-pointer' onClick={toggleSignInForm}>
-          {isSignUp ? "New to Netflix? Sign Up Now" : "Already a user? Sign In"}
+          {isSignUp ? "Already a user? Sign In" : "New to Netflix? Sign Up Now"}
         </div>
       </form>
     </div>
