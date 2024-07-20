@@ -10,3 +10,6 @@ export const TMDB_API_Options =  {
   };
 
 export const YoutubeVideoURL_NO_KEY = 'https://www.youtube.com/embed/'; 
+
+export const ImgCDNPosterUrl = 'https://image.tmdb.org/t/p/w300/';
+export const ImgCDNBackdropUrl = 'https://image.tmdb.org/t/p/w780/'; // or w1280 for higher resolution
