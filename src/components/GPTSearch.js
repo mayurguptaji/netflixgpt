@@ -1,11 +1,11 @@
-import React from 'react'
+import React from 'react';
 import GPTSearchPart from './GPTSearchPart';
 import GPTSearchRecommend from './GPTSearchRecommend';
 
 
 const GPTSearch = () => {
   return (
-    <div>
+    <div className='relative'>
       <GPTSearchPart />
       <GPTSearchRecommend />
 
